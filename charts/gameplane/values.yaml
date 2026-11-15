@@ -37,7 +37,7 @@ image:
   # Component images are published to {registry}/{operator,api,agent} by the
   # release workflow. The release matches this default; override only to pin a
   # mirror or fork.
-  registry: ghcr.io/gameplanepanel/gameplane
+  registry: ghcr.io/bambithedeer/gameplane # fork: our release images (FORK.md)
   # Empty tag => the chart's appVersion (so chart vX pulls images vX). Set to a
   # channel like "edge" to track the rolling images published on every master push.
   tag: ""

@@ -2,8 +2,13 @@
 # Classic keyed cosign verification checks the digest. Also check the
 # repository named in the signed payload before trusting a component.
 verify_release_signature() {
-  local repository=$1 digest=$2
-  if ! cosign verify --key signing/cosign.pub --new-bundle-format=false "$repository@$digest" |
+  local repository=$1 digest=$2 key=signing/cosign.pub
+  # fork: this fork's own images are signed with signing/fork-cosign.pub; the upstream releases the
+  # upgrade fixture starts from keep upstream's key (FORK.md).
+  if [[ -f signing/fork-cosign.pub && $repository == "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/"* ]]; then
+    key=signing/fork-cosign.pub
+  fi
+  if ! cosign verify --key "$key" --new-bundle-format=false "$repository@$digest" |
     jq -e --arg repo "$repository" --arg digest "$digest" 'any(.[];
       .critical.identity["docker-reference"] == $repo and
       .critical.image["docker-manifest-digest"] == $digest)' >/dev/null; then
